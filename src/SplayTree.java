@@ -1,173 +1,286 @@
+import java.util.ArrayList;
 
-public class SplayTree<K extends Comparable<K>, V> implements Mapping<K,V>{
-    private Association<K,V> val;
-    private SplayTree<K,V> parent;
-    private SplayTree<K,V> left, right;
+//Referencia de codigo: https://www.sanfoundry.com/java-program-implement-splay-tree/
 
-    public SplayTree(){
-        val = null;
-        parent = null;
-        left = right = null;
+
+public class SplayTree {
+
+    SplayNode root;
+    int count = 0;
+
+    /** Constructor **/
+
+    public SplayTree()
+    {
+        root = null;
     }
 
-    public SplayTree(Association<K,V> assoc){
-        val = assoc;
-        right = left = new SplayTree<K,V>();
-        setLeft(left);
-        setRight(right);
-    }
 
-    public int size(){
-        return 0;
-    }
+    /** function to insert element */
 
-    public Association<K,V> get(SplayTree<K,V> node, Association<K,V> value){
-        if (node.getValue().compareTo(value)==0) {
-            return node.getValue();
+    public void insert(SplayNode word)
+    {
+        SplayNode z = root;
+
+        SplayNode p = null;
+
+        while (z != null)
+        {
+            p = z;
+            if (word.english.compareTo(p.english) > 0)
+                z = z.right;
+
+            else
+                z = z.left;
         }
-        Association<K,V> contains = null;
-        if (node.getLeft() != null) {
-            contains = get(node.getLeft(), value);
+
+        z = new SplayNode();
+
+        z.english = word.english;
+        z.spanish= word.spanish;
+
+        z.parent = p;
+
+        if (p == null)
+
+            root = z;
+
+        else if (word.english.compareTo(p.english) > 0)
+
+            p.right = z;
+
+        else
+
+            p.left = z;
+
+        Splay(z);
+
+        count++;
+
+    }
+
+
+    private void Splay(SplayNode x)
+
+    {
+
+        while (x.parent != null)
+
+        {
+
+            SplayNode Parent = x.parent;
+
+            SplayNode GrandParent = Parent.parent;
+
+            if (GrandParent == null)
+
+            {
+
+                if (x == Parent.left)
+
+                    makeLeftChildParent(x, Parent);
+
+                else
+
+                    makeRightChildParent(x, Parent);
+
+            }
+
+            else
+
+            {
+
+                if (x == Parent.left)
+
+                {
+
+                    if (Parent == GrandParent.left)
+
+                    {
+
+                        makeLeftChildParent(Parent, GrandParent);
+
+                        makeLeftChildParent(x, Parent);
+
+                    }
+
+                    else
+
+                    {
+
+                        makeLeftChildParent(x, x.parent);
+
+                        makeRightChildParent(x, x.parent);
+
+                    }
+
+                }
+
+                else
+
+                {
+
+                    if (Parent == GrandParent.left)
+
+                    {
+
+                        makeRightChildParent(x, x.parent);
+
+                        makeLeftChildParent(x, x.parent);
+
+                    }
+
+                    else
+
+                    {
+
+                        makeRightChildParent(Parent, GrandParent);
+
+                        makeRightChildParent(x, Parent);
+
+                    }
+
+                }
+
+            }
+
         }
-        if (contains == null && node.getRight() != null) {
-            contains = get(node.getRight(), value);
+
+        root = x;
+
+    }
+    /** rotate **/
+
+    public void makeLeftChildParent(SplayNode c, SplayNode p)
+
+    {
+
+        if ((c == null) || (p == null) || (p.left != c) || (c.parent != p))
+
+            throw new RuntimeException("WRONG");
+
+
+
+        if (p.parent != null)
+
+        {
+
+            if (p == p.parent.left)
+
+                p.parent.left = c;
+
+            else
+
+                p.parent.right = c;
+
         }
 
-        return contains;
+        if (c.right != null)
+
+            c.right.parent = p;
+
+
+
+        c.parent = p.parent;
+
+        p.parent = c;
+
+        p.left = c.right;
+
+        c.right = p;
+
     }
 
-    public Association<K,V> remove(Association<K,V> value){
-        return value;
-    }
 
-    public void setLeft(SplayTree<K,V> newLeft){
-        if (isEmpty()) return;
-        if (left != null && left.getParent() == this) left.setParent(null);
-        left = newLeft;
-        left.setParent(this);
-    }
 
-    public boolean isEmpty() {
-        return this.getValue() == null;
-    }
+    /** rotate **/
 
-    public void setRight(SplayTree<K,V> newRight){
-        if (isEmpty()) return;
-        if (right != null && right.getParent() == this) right.setParent(null);
-        right = newRight;
-        right.setParent(this);
-    }
+    public void makeRightChildParent(SplayNode c, SplayNode p)
 
-    protected void setParent(SplayTree<K,V> newParent){
-        if (!isEmpty()){
-            parent = newParent;
+    {
+
+        if ((c == null) || (p == null) || (p.right != c) || (c.parent != p))
+
+            throw new RuntimeException("WRONG");
+
+        if (p.parent != null)
+
+        {
+
+            if (p == p.parent.left)
+
+                p.parent.left = c;
+
+            else
+
+                p.parent.right = c;
+
         }
+
+        if (c.left != null)
+
+            c.left.parent = p;
+
+        c.parent = p.parent;
+
+        p.parent = c;
+
+        p.right = c.left;
+
+        c.left = p;
+
     }
 
-    public SplayTree<K,V> getLeft() {
-        return left;
+    /** Function for inorder traversal **/
+    ArrayList<SplayNode> splayList = new ArrayList<>();
+
+    public void inorder()
+
+    {
+
+        inorder(root);
+
     }
 
-    public SplayTree<K,V> getRight() {
-        return right;
-    }
+    private void inorder(SplayNode r)
 
-    public SplayTree<K,V> getParent() {
-        return parent;
-    }
+    {
 
-    public Association<K,V> getValue(){
-        return val;
-    }
+        if (r != null)
 
-    public void setValue(Association<K,V> value){
-        val = value;
-    }
+        {
 
-    public void add(Association<K,V> newValue, SplayTree<K,V> tree){
-        int comp = tree.getValue().compareTo(newValue);
+            inorder(r.left);
 
-        if(comp>0 && tree.getLeft()==null){
-            tree.setLeft(new SplayTree<K,V>());
-            tree.getLeft().setValue(newValue);
-            balance(tree.getLeft());
-        }else if(comp>0 && tree.getLeft()!=null){
-            add(newValue, tree.getLeft());
+            splayList.add(r);
 
-        }if(comp<=0 && tree.getRight()==null){
-            tree.setRight(new SplayTree<K,V>());
-            tree.getRight().setValue(newValue);
-            balance(tree.getRight());
-        }else if(comp<=0 && tree.getRight()!=null){
-            add(newValue, tree.getRight());
+            inorder(r.right);
+
         }
+
     }
 
-    private void balance(SplayTree<K,V> tree){
-        //Repetir los movimientos hasta llegar a la raiz
-        while(tree.parent != null){
-            //Si el arbol esta a la izquierda del padre hacer zig
-            if(tree.getValue().compareTo(tree.getParent().getValue()) < 0){
-                zig(tree);
-                //Si esta a la derecha del padre hacer zag
-            }else{
-                zag(tree);
+
+//codigo basado en https://www.sanfoundry.com/java-program-implement-splay-tree/
+
+
+    public String search(String word)
+    {
+        inorder();
+        for(int i=0;i<splayList.size();i++)
+        {
+            if(splayList.get(i).english.equals(word))
+            {
+                // System.out.println();
+                //  System.out.println(splayList.get(i).spanish);
+                return splayList.get(i).spanish;
             }
         }
+        return "*"+word+"*";
     }
 
-    private void zig(SplayTree<K,V> tree){
-        tree.getRight().setParent(tree.getParent());
-        tree.getParent().setLeft(tree.getRight());
 
-        tree.setRight(tree.getParent());
-        tree.setParent(tree.getRight().getParent());
-        tree.getRight().setParent(tree);
-    }
 
-    private void zag(SplayTree<K,V> tree){
-        tree.getLeft().setParent(tree.getParent());
-        tree.getParent().setRight(tree.getLeft());
 
-        tree.setLeft(tree.getParent());
-        tree.setParent(tree.getLeft().getParent());
-        tree.getLeft().setParent(tree);
-    }
 
-    public void inOrder(SplayTree<K,V> node) {
-        if (node.getLeft() != null) {
-            inOrder(node.getLeft());
-        }else{
-            System.out.println(node.getValue().toString());
-            if (node.getRight() != null) {
-                inOrder(node.getRight());
-            }
-        }
-    }
-
-    @Override
-    public boolean isHashing() {
-        return false;
-    }
-
-    @Override
-    public V remove(K key) {
-
-        return this.remove(key);
-    }
-
-    @Override
-    public V put(Association<K, V> association) {
-        return this.put(association);
-    }
-
-    @Override
-    public boolean searchValue(String key) {
-        return this.searchValue(key);
-    }
-
-    @Override
-    public V get(Object key) {
-        return this.get(key);
-    }
 }
