@@ -1,7 +1,7 @@
 /**
  * Hoja de Trabajo 9
  * Algoritmos y Estructuras de Datos
- * Sección: 30
+ * Sección: 20
  * Fecha de entrega: 27/04/2020
  * Jose Gutierrez	carne: 19111
  * Cesar Rodas  carne: 16776
