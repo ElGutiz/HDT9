@@ -1,3 +1,12 @@
+/**
+ * Hoja de Trabajo 9
+ * Algoritmos y Estructuras de Datos
+ * Sección: 20
+ * Autores:
+ Jose Gutierrez, 19111
+ Cesar Rodas, 16776
+ */
+
 import java.util.HashMap;
 
 class HashMap_<K,V> implements Map<K,V>

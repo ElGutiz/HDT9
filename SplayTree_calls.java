@@ -1,3 +1,12 @@
+/**
+ * Hoja de Trabajo 9
+ * Algoritmos y Estructuras de Datos
+ * Sección: 20
+ * Autores:
+ Jose Gutierrez, 19111
+ Cesar Rodas, 16776
+ */
+
 class SplayTree_calls<K,V> implements Map<K,V>
 {
     SplayTree tree;
